@@ -1,0 +1,26 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1602550971257.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "1537377563",
+    "id" : "B9A43D20",
+    "lastKnownWriteTime" : 1602551034,
+    "last_content_update" : 1602551034144,
+    "path" : "~/ncabsenteeballots/ncabsenteeballots.Rmd",
+    "project_path" : "ncabsenteeballots.Rmd",
+    "properties" : {
+        "cursorPosition" : "151,0",
+        "scrollLine" : "128",
+        "tempName" : "Untitled1"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 2,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_markdown"
+}
