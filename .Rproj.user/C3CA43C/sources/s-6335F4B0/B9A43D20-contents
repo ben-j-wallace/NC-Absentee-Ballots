@@ -55,10 +55,10 @@ returns$race = recode(returns$race, `BLACK or AFRICAN AMERICAN` = "Black", `INDI
 
 ```{r filter counties}
 requests <- requests %>%
-  filter(county == "WAKE")
+  filter(county == "WATAUGA")
 
 returns <- returns %>%
-  filter(county == "WAKE")
+  filter(county == "WATAUGA")
 ```
 
 
@@ -73,7 +73,7 @@ reqtotals <- reqtotals %>%
   summarise(reqtotal = sum(count))
 
 rettotals <- returns %>%
-  filter(rtn_status == "ACCEPTED", ethnicity != "hispanic")
+  filter(rtn_status != "ACCEPTED", ethnicity != "hispanic")
   
 rettotals$race <- fct_other(rettotals$race, keep = c("White", "Black", "Asian"), other_level = "Other")
 
@@ -124,7 +124,7 @@ totals$race <- factor(totals$race, levels = c("White", "Black", "Other", "Hispan
 
 requestplot <- totals %>%
   ggplot(aes(x = race, y = reqtotal / sum(reqtotal) * 100)) +
-  geom_bar(stat = "identity") +
+  geom_bar(stat = "identity", color = "black", fill = c("lightsteelblue1", "lightsteelblue2", "lightsteelblue", "lightsteelblue3", "lightsteelblue4")) +
   labs(title = "Percent of Requested Ballots by Race", 
        x = "Race",
        y = "Percent") +
@@ -132,7 +132,7 @@ requestplot <- totals %>%
 
 returnplot <- totals %>%
   ggplot(aes(x = race, y = rettotal / sum(rettotal) * 100)) +
-  geom_bar(stat = "identity") +
+  geom_bar(stat = "identity", color = "black", fill = c("lightsteelblue1", "lightsteelblue2", "lightsteelblue", "lightsteelblue3", "lightsteelblue4")) +
   labs(title = "Percent of Returned Ballots by Race", 
        x = "Race", 
        y = "Percent") +
@@ -140,4 +140,5 @@ returnplot <- totals %>%
 
 gridExtra::grid.arrange(requestplot, returnplot, nrow = 2)
 ```
+
 

@@ -1,0 +1,8 @@
+"0","returns <- returns %>%"
+"0","  select(county_desc, race, ethnicity, ballot_rtn_status) %>%"
+"0","  rename(county = county_desc,"
+"0","         rtn_status = ballot_rtn_status)"
+"0",""
+"0","returns$ethnicity = recode(returns$ethnicity, `NOT HISPANIC or NOT LATINO` = ""nonhispanic"", `HISPANIC or LATINO` = ""hispanic"", `UNDESIGNATED` = ""undesignated"", `ASIAN` = ""Asian"", `NATIVE HAWAIIAN or PACIFIC ISLANDER` = ""pacislander"", `OTHER` = ""Other"")"
+"0",""
+"0","returns$race = recode(returns$race, `BLACK or AFRICAN AMERICAN` = ""Black"", `INDIAN AMERICAN or ALASKA NATIVE` = ""indianamerican"", `TWO or MORE RACES` = ""multiracial"", `WHITE` = ""White"", `UNDESIGNATED` = ""undesignated"", `ASIAN` = ""Asian"", `NATIVE HAWAIIAN or PACIFIC ISLANDER` = ""pacislander"", `OTHER` = ""Other"")"

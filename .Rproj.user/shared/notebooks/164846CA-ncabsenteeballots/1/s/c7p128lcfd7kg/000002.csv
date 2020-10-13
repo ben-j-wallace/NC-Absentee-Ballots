@@ -1,0 +1,41 @@
+"0","requests <- read_csv(""data/absentee_requests.csv"")"
+"2","Parsed with column specification:
+cols(
+  county_id = [32mcol_double()[39m,
+  county_name = [31mcol_character()[39m,
+  election_dt = [31mcol_character()[39m,
+  party_desc = [31mcol_character()[39m,
+  race_desc = [31mcol_character()[39m,
+  ethncity_desc = [31mcol_character()[39m,
+  gender_desc = [31mcol_character()[39m,
+  age_range = [31mcol_character()[39m,
+  request_year = [32mcol_double()[39m,
+  request_week_num = [32mcol_double()[39m,
+  group_count = [32mcol_double()[39m
+)
+"
+"0","returns <- read_csv(""data/absentee_returns.csv"")"
+"2","Parsed with column specification:
+cols(
+  .default = col_character(),
+  voter_reg_num = [32mcol_double()[39m,
+  age = [32mcol_double()[39m,
+  voter_zip = [32mcol_double()[39m,
+  ballot_mail_zip = [32mcol_double()[39m,
+  relative_request_zip = [32mcol_double()[39m,
+  site_name = [33mcol_logical()[39m,
+  sdr = [33mcol_logical()[39m
+)
+"
+"2","See spec(...) for full column specifications.
+"
+"2","544 parsing failures.
+  row       col           expected actual                        file
+26048 site_name 1/0/T/F/TRUE/FALSE MAILED 'data/absentee_returns.csv'
+26090 site_name 1/0/T/F/TRUE/FALSE MAILED 'data/absentee_returns.csv'
+26091 site_name 1/0/T/F/TRUE/FALSE MAILED 'data/absentee_returns.csv'
+26117 site_name 1/0/T/F/TRUE/FALSE MAILED 'data/absentee_returns.csv'
+26244 site_name 1/0/T/F/TRUE/FALSE MAILED 'data/absentee_returns.csv'
+..... ......... .................. ...... ...........................
+See problems(...) for more details.
+"

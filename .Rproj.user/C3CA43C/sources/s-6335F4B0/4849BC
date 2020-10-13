@@ -1,0 +1,33 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1602552672728.000,
+    "dirty" : false,
+    "encoding" : "",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "4849BC",
+    "lastKnownWriteTime" : 30118286370996316,
+    "last_content_update" : 1602552672728,
+    "path" : null,
+    "project_path" : null,
+    "properties" : {
+        "cacheKey" : "A033FFAD",
+        "caption" : "totals",
+        "contentUrl" : "grid_resource/gridviewer.html?env=&obj=totals&cache_key=A033FFAD",
+        "displayedObservations" : 5,
+        "environment" : "",
+        "expression" : "totals",
+        "object" : "totals",
+        "preview" : 0,
+        "totalObservations" : 5,
+        "variables" : 4
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 3,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_dataframe"
+}
