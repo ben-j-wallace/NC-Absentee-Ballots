@@ -54,34 +54,37 @@ returns$race = recode(returns$race, `BLACK or AFRICAN AMERICAN` = "Black", `INDI
 *Filter Counties Here*
 
 ```{r filter counties}
-requests <- requests %>%
-  filter(county == "WATAUGA")
+#requests <- requests %>%
+  #filter(county == "WATAUGA")
 
-returns <- returns %>%
-  filter(county == "WATAUGA")
+#returns <- returns %>%
+  #filter(county == "WATAUGA")
 ```
 
 
 ```{r totaling counts}
 reqtotals <- requests %>%
-  filter(ethnicity != "hispanic")
+  filter(ethnicity != "hispanic") %>%
+  select(county, )
 
 reqtotals$race <- fct_other(reqtotals$race, keep = c("White", "Black", "Asian"), other_level = "Other") 
 
-reqtotals <- reqtotals %>%
-  group_by(race) %>%
-  summarise(reqtotal = sum(count))
+rettotalsaccpt <- rettotals %>%
+  filter(rtn_status == "ACCEPTED", ethnicity != "hispanic")
 
-rettotals <- returns %>%
+rettotalsnaccpt <- rettotals %>%
   filter(rtn_status != "ACCEPTED", ethnicity != "hispanic")
   
-rettotals$race <- fct_other(rettotals$race, keep = c("White", "Black", "Asian"), other_level = "Other")
+rettotalsaccpt$race <- fct_other(rettotalsaccpt$race, keep = c("White", "Black", "Asian"), other_level = "Other")
+rettotalsnaccpt$race <- fct_other(rettotalsnaccpt$race, keep = c("White", "Black", "Asian"), other_level = "Other")
 
-rettotals <- rettotals %>%
+totals2 <- dplyr::bind_rows(reqtotals, rettotalsaccpt, rettotalsnaccpt) %>%
+  select(race, reqtotal, `Accepted`, `Not Accepted`) %>%
+  rename(Race = race, `Requested` = reqtotal) %>%
   group_by(race) %>%
-  summarise(rettotal = n())
-
-totals <- dplyr::bind_cols(reqtotals, rettotals)
+  summarise(`Accepted` = n(),
+            `Not Accepted` = n(),
+            reqtotal = sum(count))
 ```
 
 ```{r hispanic}
