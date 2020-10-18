@@ -15,6 +15,8 @@ library(dplyr)
 library(readxl)
 ```
 
+NC data taken OCT 18, 2020
+
 ```{r data, include = FALSE}
 requests <- read_csv("data/absentee_requests.csv")
 returns <- read_csv("data/absentee_returns.csv")
@@ -22,92 +24,93 @@ returns <- read_csv("data/absentee_returns.csv")
 
 ```{r clean requests}
 requests <- requests %>%
-  select(county_name, party_desc, ethncity_desc, race_desc, gender_desc, age_range, request_week_num, group_count)
-
-requests <- requests %>%
-  rename(party = party_desc,
-         count = group_count,
+  rename(count = group_count,
          county = county_name,
          ethnicity = ethncity_desc,
-         race = race_desc,
-         gender = gender_desc,
-         age = age_range,
-         week = request_week_num)
-
+         race = race_desc) %>%
+  filter(county == c("DURHAM","GUILFORD","SCOTLAND","ORANGE","WATAUGA"))
 
 requests$ethnicity = recode(requests$ethnicity, `NOT HISPANIC or NOT LATINO` = "nonhispanic" , `HISPANIC or LATINO` = "hispanic", `UNDESIGNATED` = "undesignated")
 
 requests$race = recode(requests$race, `BLACK or AFRICAN AMERICAN` = "Black", `INDIAN AMERICAN or ALASKA NATIVE` = "indianamerican", `TWO or MORE RACES` = "multiracial", `WHITE` = "White", `UNDESIGNATED` = "undesignated", `ASIAN` = "Asian", `NATIVE HAWAIIAN or PACIFIC ISLANDER` = "pacislander", `OTHER` = "Other")
+
+requests$race <- fct_other(requests$race, keep = c("White", "Black"), other_level = "Other") 
 ```
 
-```{r returns}
+```{r clean returns}
 returns <- returns %>%
   select(county_desc, race, ethnicity, ballot_rtn_status) %>%
   rename(county = county_desc,
-         rtn_status = ballot_rtn_status)
+         rtn_status = ballot_rtn_status) %>%
+  filter(county == c("DURHAM","GUILFORD","SCOTLAND", "ORANGE", "WATAUGA"))
 
 returns$ethnicity = recode(returns$ethnicity, `NOT HISPANIC or NOT LATINO` = "nonhispanic", `HISPANIC or LATINO` = "hispanic", `UNDESIGNATED` = "undesignated", `ASIAN` = "Asian", `NATIVE HAWAIIAN or PACIFIC ISLANDER` = "pacislander", `OTHER` = "Other")
 
 returns$race = recode(returns$race, `BLACK or AFRICAN AMERICAN` = "Black", `INDIAN AMERICAN or ALASKA NATIVE` = "indianamerican", `TWO or MORE RACES` = "multiracial", `WHITE` = "White", `UNDESIGNATED` = "undesignated", `ASIAN` = "Asian", `NATIVE HAWAIIAN or PACIFIC ISLANDER` = "pacislander", `OTHER` = "Other")
+  
+returns$race <- fct_other(returns$race, keep = c("White", "Black"), other_level = "Other")
 ```
-
-*Filter Counties Here*
-
-```{r filter counties}
-#requests <- requests %>%
-  #filter(county == "WATAUGA")
-
-#returns <- returns %>%
-  #filter(county == "WATAUGA")
-```
-
 
 ```{r totaling counts}
+
 reqtotals <- requests %>%
   filter(ethnicity != "hispanic") %>%
-  select(county, )
+  select(county, race, count) %>%
+  group_by(county, race) %>%
+  summarise(requests = n())
 
-reqtotals$race <- fct_other(reqtotals$race, keep = c("White", "Black", "Asian"), other_level = "Other") 
+rettotals <- returns %>%
+  filter(ethnicity != "hispanic") %>%
+  mutate(accepted = rtn_status == "ACCEPTED") %>%
+  group_by(county, race, accepted) %>%
+  summarise(returncount = n())
 
-rettotalsaccpt <- rettotals %>%
-  filter(rtn_status == "ACCEPTED", ethnicity != "hispanic")
+rettotals2 <- rettotals %>%
+  pivot_wider(names_from = accepted, values_from = returncount)
 
-rettotalsnaccpt <- rettotals %>%
-  filter(rtn_status != "ACCEPTED", ethnicity != "hispanic")
-  
-rettotalsaccpt$race <- fct_other(rettotalsaccpt$race, keep = c("White", "Black", "Asian"), other_level = "Other")
-rettotalsnaccpt$race <- fct_other(rettotalsnaccpt$race, keep = c("White", "Black", "Asian"), other_level = "Other")
-
-totals2 <- dplyr::bind_rows(reqtotals, rettotalsaccpt, rettotalsnaccpt) %>%
-  select(race, reqtotal, `Accepted`, `Not Accepted`) %>%
-  rename(Race = race, `Requested` = reqtotal) %>%
-  group_by(race) %>%
-  summarise(`Accepted` = n(),
-            `Not Accepted` = n(),
-            reqtotal = sum(count))
+totals <- dplyr::bind_cols(reqtotals, rettotals2) %>%
+  select(county, race, requests, `TRUE`, `FALSE`)
 ```
 
 ```{r hispanic}
 hispanicreq <- requests %>%
   filter(ethnicity == "hispanic") %>%
-  summarise(reqtotal = sum(count))
+  select(county, count) %>%
+  mutate(race = "Hispanic") %>%
+  group_by(county) %>%
+  summarise(requests = n())
 
 hispanicret <- returns %>%
   filter(ethnicity == "hispanic") %>%
-  summarise(rettotal = n()) %>%
-  mutate(race = "Hispanic")
+  mutate(accepted = rtn_status == "ACCEPTED") %>%
+  group_by(county, accepted) %>%
+  summarise(returncount = n()) %>%
+  mutate(race = "Hispanic") %>%
+  pivot_wider(names_from = accepted, values_from = returncount)
 
 hispanic <- dplyr::bind_cols(hispanicreq, hispanicret) 
 
-totals <- bind_rows(totals, hispanic)
+totals <- bind_rows(totals, hispanic) %>%
+  select(race, county, `TRUE`, `FALSE`, requests)
 ```
 
-```{r percentage req/accpt}
+```{r Demographic data}
 totals <- totals %>%
- select(-race1)
+  arrange(county, race) %>%
+  distinct() %>%
+  mutate(pctpop = "") %>%
+  rename(accepted = `TRUE`, rejected = `FALSE`)
+
+x <- c(36.4, 13.7, (100-36.4-13.7-43), 43, 35.4, 8.4, (100-35.4-8.4-49.4), 49.4, 11.8, 8.6,(100-11.8-8.6-69.5), 69.5, 38.9, 3.3, (100-38.9-3.3-42.5), 42.5, 1.8, 4, (100-1.8-4-91.4), 91.4)
+
+totals$pctpop <- x
+```
+
+
+```{r percentage req/accpt}
   
 totals <- totals %>%
-  mutate(pctaccpt = rettotal / reqtotal * 100)
+  mutate(pctaccpt = accepted / requests * 100)
 ```
 
 *Visualizations*

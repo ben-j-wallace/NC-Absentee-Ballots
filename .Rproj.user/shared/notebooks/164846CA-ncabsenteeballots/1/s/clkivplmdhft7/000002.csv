@@ -1,5 +1,0 @@
-"0","totals <- totals %>%"
-"0"," select(-race1)"
-"0","  "
-"0","totals <- totals %>%"
-"0","  mutate(pctaccpt = rettotal / reqtotal * 100)"

@@ -1,5 +1,0 @@
-"0","requests <- requests %>%"
-"0","  filter(county == ""WATAUGA"")"
-"0",""
-"0","returns <- returns %>%"
-"0","  filter(county == ""WATAUGA"")"
