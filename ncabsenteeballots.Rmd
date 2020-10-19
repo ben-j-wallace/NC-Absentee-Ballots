@@ -12,7 +12,8 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r load packages, include=FALSE}
 library(tidyverse)
 library(dplyr)
-library(readxl)
+library(reshape2)
+library(cowplot)
 ```
 
 NC data taken OCT 18, 2020
@@ -57,7 +58,8 @@ reqtotals <- requests %>%
   filter(ethnicity != "hispanic") %>%
   select(county, race, count) %>%
   group_by(county, race) %>%
-  summarise(requests = n())
+  summarise(requests = sum(count))
+  
 
 rettotals <- returns %>%
   filter(ethnicity != "hispanic") %>%
@@ -76,16 +78,16 @@ totals <- dplyr::bind_cols(reqtotals, rettotals2) %>%
 hispanicreq <- requests %>%
   filter(ethnicity == "hispanic") %>%
   select(county, count) %>%
-  mutate(race = "Hispanic") %>%
+  mutate(race = "Latino/Hispanic") %>%
   group_by(county) %>%
-  summarise(requests = n())
+  summarise(requests = sum(count))
 
 hispanicret <- returns %>%
   filter(ethnicity == "hispanic") %>%
   mutate(accepted = rtn_status == "ACCEPTED") %>%
   group_by(county, accepted) %>%
   summarise(returncount = n()) %>%
-  mutate(race = "Hispanic") %>%
+  mutate(race = "Latino/Hispanic") %>%
   pivot_wider(names_from = accepted, values_from = returncount)
 
 hispanic <- dplyr::bind_cols(hispanicreq, hispanicret) 
@@ -110,41 +112,71 @@ totals$pctpop <- x
 ```{r percentage req/accpt}
   
 totals <- totals %>%
-  mutate(pctaccpt = accepted / requests * 100)
+  mutate(pctaccpt = accepted / requests * 100) 
+  
+totals <- totals %>%
+  group_by(county) %>%
+  mutate(pctrqst = requests/sum(requests) * 100)
 ```
 
 *Visualizations*
 
-```{r ballots returned and accepted}
-ggplot(data = totals, aes(x = reorder(race, -pctaccpt), y = pctaccpt)) +
-  geom_bar(stat = "identity", color = "black", fill = c("lightsteelblue1", "lightsteelblue2", "lightsteelblue", "lightsteelblue3", "lightsteelblue4")) +
-  labs(title = "Percent of Requested Ballots Returned/Accepted by Race", x = "Race", y = "Percent") +
-  theme_bw()
+```{r requested vs. population}
 
+totals_long <- totals %>%
+  select(pctrqst, everything()) %>%
+  pivot_longer(cols = c("pctrqst", "pctpop"), names_to = c("stats"))
+
+p1a <- totals_long %>%
+  filter(county == "DURHAM") %>%
+  ggplot(aes(x = race, y = value, fill = stats)) +
+  geom_bar(position = "dodge", stat = "identity", color = "black") +
+  scale_fill_manual(values = c("steelblue1", "navy"), name = "", labels = c("Share of Population", "Share of Requested Ballots")) +
+  labs(x = "Race", y = "Percent") +
+  scale_y_continuous(breaks=seq(0,100,10)) +
+  theme_cowplot()
+
+
+p1b <- totals_long %>%
+  filter(county == "GUILFORD") %>%
+  ggplot(aes(x = race, y = value, fill = stats)) +
+  geom_bar(position = "dodge", stat = "identity", color = "black") +
+  scale_fill_manual(values = c("steelblue1", "navy"), name = "", labels = c("Share of Population", "Share of Requested Ballots")) +
+  labs(x = "Race", y = "Percent") +
+  scale_y_continuous(breaks=seq(0,100,10)) +
+  theme_cowplot()
+
+p1c <- totals_long %>%
+  filter(county == "ORANGE") %>%
+  ggplot(aes(x = race, y = value, fill = stats)) +
+  geom_bar(position = "dodge", stat = "identity", color = "black") +
+  scale_fill_manual(values = c("steelblue1", "navy"), name = "", labels = c("Share of Population", "Share of Requested Ballots")) +
+  labs(x = "Race", y = "Percent") +
+  scale_y_continuous(breaks=seq(0,100,10)) +
+  theme_cowplot()
+
+
+p1d <- totals_long %>%
+  filter(county == "SCOTLAND") %>%
+  ggplot(aes(x = race, y = value, fill = stats)) +
+  geom_bar(position = "dodge", stat = "identity", color = "black") +
+  scale_fill_manual(values = c("steelblue1", "navy"), name = "", labels = c("Share of Population", "Share of Requested Ballots")) +
+  labs(x = "Race", y = "Percent") +
+  scale_y_continuous(breaks=seq(0,100,10)) +
+  theme_cowplot()
+
+p1e <- totals_long %>%
+  filter(county == "WATAUGA") %>%
+  ggplot(aes(x = race, y = value, fill = stats)) +
+  geom_bar(position = "dodge", stat = "identity", color = "black") +
+  scale_fill_manual(values = c("steelblue1", "navy"), name = "", labels = c("Share of Population", "Share of Requested Ballots")) +
+  labs(x = "Race", y = "Percent") +
+  scale_y_continuous(breaks=seq(0,100,10)) +
+  theme_cowplot()
+
+p1e
 ```
 
 
-```{r ballots requested vs returned}
-
-totals$race <- factor(totals$race, levels = c("White", "Black", "Other", "Hispanic", "Asian"))
-
-requestplot <- totals %>%
-  ggplot(aes(x = race, y = reqtotal / sum(reqtotal) * 100)) +
-  geom_bar(stat = "identity", color = "black", fill = c("lightsteelblue1", "lightsteelblue2", "lightsteelblue", "lightsteelblue3", "lightsteelblue4")) +
-  labs(title = "Percent of Requested Ballots by Race", 
-       x = "Race",
-       y = "Percent") +
-  theme_bw()
-
-returnplot <- totals %>%
-  ggplot(aes(x = race, y = rettotal / sum(rettotal) * 100)) +
-  geom_bar(stat = "identity", color = "black", fill = c("lightsteelblue1", "lightsteelblue2", "lightsteelblue", "lightsteelblue3", "lightsteelblue4")) +
-  labs(title = "Percent of Returned Ballots by Race", 
-       x = "Race", 
-       y = "Percent") +
-  theme_bw()
-
-gridExtra::grid.arrange(requestplot, returnplot, nrow = 2)
-```
 
 
