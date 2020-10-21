@@ -132,7 +132,7 @@ p1a <- totals_long %>%
   ggplot(aes(x = race, y = value, fill = stats)) +
   geom_bar(position = "dodge", stat = "identity", color = "black") +
   scale_fill_manual(values = c("steelblue1", "navy"), name = "", labels = c("Share of Population", "Share of Requested Ballots")) +
-  labs(x = "Race", y = "Percent") +
+  labs(x = "Race/Ethnicity", y = "Percent") +
   scale_y_continuous(breaks=seq(0,100,10)) +
   theme_cowplot()
 
@@ -142,7 +142,7 @@ p1b <- totals_long %>%
   ggplot(aes(x = race, y = value, fill = stats)) +
   geom_bar(position = "dodge", stat = "identity", color = "black") +
   scale_fill_manual(values = c("steelblue1", "navy"), name = "", labels = c("Share of Population", "Share of Requested Ballots")) +
-  labs(x = "Race", y = "Percent") +
+  labs(x = "Race/Ethnicity", y = "Percent") +
   scale_y_continuous(breaks=seq(0,100,10)) +
   theme_cowplot()
 
@@ -151,7 +151,7 @@ p1c <- totals_long %>%
   ggplot(aes(x = race, y = value, fill = stats)) +
   geom_bar(position = "dodge", stat = "identity", color = "black") +
   scale_fill_manual(values = c("steelblue1", "navy"), name = "", labels = c("Share of Population", "Share of Requested Ballots")) +
-  labs(x = "Race", y = "Percent") +
+  labs(x = "Race/Ethnicity", y = "Percent") +
   scale_y_continuous(breaks=seq(0,100,10)) +
   theme_cowplot()
 
@@ -161,7 +161,7 @@ p1d <- totals_long %>%
   ggplot(aes(x = race, y = value, fill = stats)) +
   geom_bar(position = "dodge", stat = "identity", color = "black") +
   scale_fill_manual(values = c("steelblue1", "navy"), name = "", labels = c("Share of Population", "Share of Requested Ballots")) +
-  labs(x = "Race", y = "Percent") +
+  labs(x = "Race/Ethnicity", y = "Percent") +
   scale_y_continuous(breaks=seq(0,100,10)) +
   theme_cowplot()
 
@@ -170,11 +170,11 @@ p1e <- totals_long %>%
   ggplot(aes(x = race, y = value, fill = stats)) +
   geom_bar(position = "dodge", stat = "identity", color = "black") +
   scale_fill_manual(values = c("steelblue1", "navy"), name = "", labels = c("Share of Population", "Share of Requested Ballots")) +
-  labs(x = "Race", y = "Percent") +
+  labs(x = "Race/Ethnicity", y = "Percent") +
   scale_y_continuous(breaks=seq(0,100,10)) +
   theme_cowplot()
 
-p1e
+p1a
 ```
 
 
